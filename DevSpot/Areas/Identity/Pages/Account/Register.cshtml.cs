@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using DevSpot.Constants;
 
 namespace DevSpot.Areas.Identity.Pages.Account
 {
@@ -97,6 +98,8 @@ namespace DevSpot.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            public bool IsJobSeeker { get; set; } = true;
         }
 
 
@@ -122,7 +125,16 @@ namespace DevSpot.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
+                    if (Input.IsJobSeeker)
+                    {
+                        await _userManager.AddToRoleAsync(user, Roles.JobSeeker);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, Roles.Employer);
+                    }
+
+                        var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
