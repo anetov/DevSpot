@@ -31,7 +31,23 @@
 @section Scripts{
 	<script>
 		function deleteJobPosting(id){
-			if(confirm("Are you sure you want to delete this job posting?"));
+			if(confirm("Are you sure you want to delete this job posting?")){
+				// url
+				// type (delete)
+				// success -> visually remove the job posting li
+				// error -> show an error message
+
+				$.ajax({
+					url: "@Url.Action("Delete", "JobPostings")/" + id,  // .../jobpostings/delete/5
+					type: "delete",
+					success: function(result){
+						
+					},
+					error: function(err){
+						alert("An error occured.")
+					}
+				});
+			}
 		}
 	</script>
 }
